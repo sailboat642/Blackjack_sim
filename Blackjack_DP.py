@@ -10,16 +10,16 @@ for i in range(10):
             states.append((i, j, k))
 
 dealer_dist = [
-    [13.6, 5.6, 14.3, 14.6, 13.8, 38.1],
+    [13.6,  5.6, 14.3, 14.6, 13.8, 38.1],
     [34.9, 13.6, 14.1, 12.8, 12.8, 11.9],
     [38.1, 11.8, 13.4, 12.6, 12.2, 12.0],
     [39.6, 11.9, 13.3, 12.1, 11.8, 11.4],
     [42.1, 12.1, 12.4, 11.0, 11.6, 10.9],
     [43.5, 12.3, 11.8, 11.0, 11.2, 10.3],
-    [26.3, 37.0, 14.1, 7.9, 7.8, 7.0],
-    [25.0, 12.7,35.6, 12.8, 7.3, 6.6],
-    [22.3, 12.0, 12.0, 35.6, 11.9, 6.2],
-    [21.3, 11.25, 11.5, 11.1, 34.1, 11.3]
+    [26.3, 37.0, 14.1,  7.9,  7.8,  7.0],
+    [25.0, 12.7, 35.6, 12.8,  7.3,  6.6],
+    [22.3, 12.0, 12.0, 35.6, 11.9,  6.2],
+    [21.3, 11.3, 11.5, 11.1, 34.1, 11.3]
 ]
 
 # cumulative win probability
@@ -31,7 +31,9 @@ for probabilities in dealer_dist:
 def blackjack_probability(s_, s, a, r):
     stay = 0
     hit = 1
-      
+
+    if not (r == 0 or r == 1):
+        return 0
     
     if a == stay:
         '''find Probability of win, loss, tie'''
@@ -101,6 +103,7 @@ def pi_20(action, state):
         else:
             return 1
 
+@profile
 def evaluate_policy(V, theta):
     while True:
         delta = 0
@@ -108,11 +111,12 @@ def evaluate_policy(V, theta):
             v = V[s1][s2][s3]
             bellman_update(V, (s1, s2, s3))
             delta = max(delta, abs(v - V[s1][s2][s3]))
+
         if delta < theta:
             break
     return V
 
-
+@profile
 def bellman_update(V, state):
     """Mutate ``V`` according to the Bellman update equation."""
     stay = 0
@@ -135,5 +139,4 @@ def bellman_update(V, state):
     V[hand][ace][dealer] = pi_20(1, state)*hit_value + pi_20(0, state)*stay_value
     return 
 
-
-evaluation = evaluate_policy(V, 0.002)
+evaluate_policy(V, 0.002)
